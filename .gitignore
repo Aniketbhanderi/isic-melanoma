@@ -1,0 +1,39 @@
+# Ignore everything except the explicitly allowed code and README files.
+*
+
+# Traverse directories so source files can be included at any depth.
+!*/
+!.gitignore
+
+# Project source code and notebooks.
+!*.py
+!*.pyi
+!*.ipynb
+!*.sh
+
+# Do not include zip and csv files
+*.zip
+*.zip.*
+*.csv
+
+# README documentation.
+![Rr][Ee][Aa][Dd][Mm][Ee]
+![Rr][Ee][Aa][Dd][Mm][Ee].*
+
+# Never include dependencies, generated files, or datasets.
+main.ipynb
+.venv*/
+venv/
+env/
+__pycache__/
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+node_modules/
+/artifacts/
+/train/
+/test/
+
+# End of ignore rules.
+
