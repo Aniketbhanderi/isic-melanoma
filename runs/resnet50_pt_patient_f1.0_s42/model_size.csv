@@ -1,0 +1,10 @@
+,value
+Model,resnet50
+Parameters (M),23.51
+Non-zero parameters (M),23.51
+"Size in memory, FP32 (MB)",89.89
+Checkpoint file best.pt (MB),89.97
+"Expected INT8 size (MB, approx.)",22.42
+"GPU time per image, batch 1 (ms)",4.584
+"GPU time per image, batch 64 (ms)",0.749
+"Peak GPU memory, 1 image (MB)",433.7
