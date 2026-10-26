@@ -13,6 +13,7 @@ Two compact convolutional neural networks trained **from scratch** using the tea
 | Precision at validation-F1 threshold | 0.0701 | 0.1236 |
 | Recall at validation-F1 threshold | 0.1765 | 0.1294 |
 | F1 at validation-F1 threshold | 0.1003 | 0.1264 |
+
 | Metric | CNN v2 |
 |---|---|
 | Accuracy | 0.9674 (96.74%) |
