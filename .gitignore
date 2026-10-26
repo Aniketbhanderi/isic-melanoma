@@ -1,0 +1,9 @@
+*.npy
+*.pth
+*.pt
+*.zip
+__pycache__/
+.ipynb_checkpoints/
+lightweight_cnn_results/
+lightweight_cnn_v2_results/
+validation_predictions.csv
