@@ -22,6 +22,10 @@ Two compact convolutional neural networks trained **from scratch** using the tea
 
 CNN v2 improved AUPRC by approximately 56.2% relative to v1, at 4.8 times the parameter count. CNN v2's best validation checkpoint occurred at epoch 20, with 76.16 minutes total training time in the recorded Colab run. Despite improvement, both models have limited sensitivity for melanoma and are **not suitable for clinical use**.
 
+## Preprocessing
+
+The shared ISIC 2020 preprocessing pipeline was developed by other team members (Monirul Islam and Aniket Bhandari)  and reused for the lightweight CNN experiments. My contributions include the CNN v1 and CNN v2 architectures, training, evaluation, and performance comparison.
+
 ## Training configuration
 
 - ISIC 2020 cached RGB images; 224 × 224 model input
