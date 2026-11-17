@@ -4,7 +4,7 @@ This branch contains two compact convolutional neural networks (CNN v1 and CNN v
 
 **Two experimental versions are retained:**
 
-- **Version 1 — Original experiment:** initial validation-only CNN results, documented in `validation_summary.csv` and the original notebook.
+- **Version 1 — Original experiment:** initial validation-only CNN results, documented in the original notebook named `train_lightweight_cnn.ipynb` here.
 - **Version 2 — Retrained experiment:** a subsequent run with fresh validation results and **one held-out test evaluation**, documented in `train_lightweight_cnn_colab_test.ipynb`. The retraining run also adds local checkpoint saving and download prompts after Google Drive mounting failed in Colab.
 
 The results from the two versions are reported separately rather than overwriting the earlier experiment.
