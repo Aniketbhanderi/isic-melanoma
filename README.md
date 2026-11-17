@@ -98,8 +98,7 @@ The shared ISIC 2020 preprocessing pipeline was developed by **Monirul Islam and
 
 ## Files and reproducibility
 
-- `train_lightweight_cnn.ipynb` — original shareable notebook for Version 1, if retained in this branch
-- `validation_summary.csv` — Version 1 validation metrics
+- `train_lightweight_cnn.ipynb` — original shareable notebook for Version 1
 - `train_lightweight_cnn_colab_test.ipynb` — Version 2 notebook containing retraining, validation, held-out test evaluation, plots, and exports
 - `requirements.txt` — dependencies, where present
 - `.gitignore` — excludes large datasets and checkpoints, where configured
