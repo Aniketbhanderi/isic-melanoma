@@ -78,7 +78,7 @@ The retrained models were evaluated on the **4,674-image patient-level held-out 
 
 ## Dataset and preprocessing
 
-The shared ISIC 2020 preprocessing pipeline was developed by **Monirul Islam and Aniket Bhandari** and reused in these lightweight CNN experiments. The lightweight CNN contributions by **Muhammad Mubinur Rahman** include both model architectures, training, evaluation, and comparison.
+The shared ISIC 2020 preprocessing pipeline was developed by **Monirul Islam and Aniket Bhanderi** and reused in these lightweight CNN experiments. The lightweight CNN contributions by **Muhammad Mubinur Rahman** include both model architectures, training, evaluation, and comparison.
 
 - Cached RGB images: **32,701** images, shape `(32701, 256, 256, 3)`, stored as `uint8` in a roughly 6.4 GB NumPy array
 - Input resolution: **224 × 224**
