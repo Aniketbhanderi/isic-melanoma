@@ -1,0 +1,38 @@
+/home/bhandead/Projects/CV/train.py:177: DtypeWarning: Columns (13: available, 14: duplicate_group, 15: kept_image_name, 16: removed_duplicate, 18: attribution, 19: copyright_license, 21: anatom_site_special, 23: concomitant_biopsy, 24: dermoscopic_type, 25: diagnosis_1, 26: diagnosis_2, 27: diagnosis_3, 28: diagnosis_4, 30: diagnosis_confirm_type, 31: family_hx_mm, 32: fitzpatrick_skin_type, 33: image_manipulation, 34: image_type, 35: lesion_id, 36: mel_mitotic_index, 38: mel_ulcer, 39: melanocytic, 40: personal_hx_mm) have mixed types. Specify dtype option on import or set low_memory=False.
+  frame = pd.read_csv(metadata_path).sort_values("cache_index").reset_index(drop=True)
+Test batch 1/145 | samples 32/4,632 | loss 0.0087 | 3.3s
+Test batch 50/145 | samples 1,600/4,632 | loss 0.0675 | 4.1s
+Test batch 100/145 | samples 3,200/4,632 | loss 0.0741 | 4.9s
+Test batch 145/145 | samples 4,632/4,632 | loss 0.0729 | 7.7s
+{
+  "checkpoint": "/home/bhandead/Projects/CV/artifacts/efficientnet_combined_model.pt",
+  "test_csv": "/home/bhandead/Projects/CV/test_cleaned.csv",
+  "n_test": 4632,
+  "class_counts": {
+    "benign": 4550,
+    "malignant": 82
+  },
+  "loss": 0.07286417118831826,
+  "accuracy": 0.9732297063903281,
+  "roc_auc": 0.9804891450013402,
+  "average_precision": 0.5903247153621992,
+  "precision_malignant": 0.3793103448275862,
+  "recall_malignant": 0.8048780487804879,
+  "f1_malignant": 0.515625,
+  "confusion_matrix_labels_0_1": [
+    [
+      4442,
+      108
+    ],
+    [
+      16,
+      66
+    ]
+  ],
+  "log_loss": 0.0728493332862854,
+  "checkpoint_validation_roc_auc": 0.9909091820085798,
+  "device": "cuda",
+  "amp_enabled": true
+}
+Saved predictions: artifacts/combined_test_predictions.csv
+Saved metrics: artifacts/combined_test_metrics.json

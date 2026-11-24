@@ -1,0 +1,48 @@
+# Ignore everything except the explicitly allowed code and README files.
+
+
+# Traverse directories so source files can be included at any depth.
+!*/
+.gitignore
+
+# Project source code and notebooks.
+!*.py
+!*.pyi
+!*.ipynb
+!*.sh
+!*.md
+
+*.toml
+*.lock
+.python-version
+
+# Do not include zip and csv files
+*.zip
+*.zip.*
+*.csv
+
+# README documentation.
+![Rr][Ee][Aa][Dd][Mm][Ee]
+![Rr][Ee][Aa][Dd][Mm][Ee].*
+
+# Never include dependencies, generated files, or datasets.
+main.ipynb
+.venv*/
+venv/
+images_isic-dicm-17k/
+env/
+__pycache__/
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+node_modules/
+/artifacts/
+/train/
+/test/
+licenses/
+# Keep generated image caches local; these can be several gigabytes each.
+/artifacts/**/images_uint8.npy
+/artifacts/**/completed.npy
+# End of ignore rules.
+

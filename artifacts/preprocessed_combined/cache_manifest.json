@@ -1,0 +1,29 @@
+{
+  "complete": true,
+  "shape": [
+    38946,
+    256,
+    256,
+    3
+  ],
+  "dtype": "uint8",
+  "provenance": {
+    "base_cache": "/home/bhandead/Projects/CV/artifacts/preprocessed_train",
+    "dicm_csv": "/home/bhandead/Projects/CV/isic-dicm-17k.csv",
+    "dicm_images": "/home/bhandead/Projects/CV/images_isic-dicm-17k",
+    "training_csv": "/home/bhandead/Projects/CV/ISIC_2020_Training_GroundTruth.csv",
+    "test_csv": "/home/bhandead/Projects/CV/ISIC_2020_Test_Metadata.csv"
+  },
+  "base_images": 32701,
+  "dicm_melanomas": 6826,
+  "excluded_training_overlap": 581,
+  "excluded_official_test_overlap": 0,
+  "added_melanomas": 6245,
+  "added_rows_missing_patient_id": 4878,
+  "total_images": 38946,
+  "class_counts": {
+    "benign": 32120,
+    "malignant": 6826
+  },
+  "patient_grouping_note": "Known patient IDs share base groups. External-only patients are namespaced; missing patients use lesion/image groups. Unknown cross-dataset patient matches and visual duplicates with different IDs are not detected."
+}

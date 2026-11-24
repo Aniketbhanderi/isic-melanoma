@@ -1,0 +1,40 @@
+{
+  "fingerprint": "64295c301243e2d36b527aaa17452215f789564af7a32cad54d04168d2f16719",
+  "config": {
+    "pipeline_version": 2,
+    "image_size_wh": [
+      256,
+      256
+    ],
+    "channels": "RGB",
+    "dtype": "uint8",
+    "resize": "JPEG draft reduced IDCT then PIL bilinear, stretch",
+    "pydicom": "3.0.2",
+    "pillow": "13.0.0",
+    "numpy": "2.5.4",
+    "labels_sha256": "98c68a10eb669215e3458ad193a24a582c974a4401e539dbbf099b318584264b",
+    "duplicate_csv_sha256": "ddfd6c2d42430bd3581f3b2116bdb1433462a7109c715a02bf7f51115fcfabce"
+  },
+  "shape": [
+    32701,
+    256,
+    256,
+    3
+  ],
+  "complete": true,
+  "completed_images": 32701,
+  "summary": {
+    "original_images": 33126,
+    "duplicate_pairs": 425,
+    "removed_duplicate_images": 425,
+    "missing_source_images": 0,
+    "retained_images": 32701,
+    "known_patients_before": 2056,
+    "known_patients_after": 2056,
+    "patients_with_multiple_images_before": 2056,
+    "patients_with_multiple_images_after": 2056,
+    "missing_patient_ids": 0,
+    "duplicate_patient_links": 0,
+    "duplicate_pairs_with_unknown_images": 0
+  }
+}

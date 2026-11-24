@@ -1,0 +1,15 @@
+{
+  "checkpoint": "/home/bhandead/Projects/CV/artifacts/efficientnet_dicm17k_model.pt",
+  "metadata_csv": "/home/bhandead/Projects/CV/ISIC_2020_Test_Metadata.csv",
+  "dicom_dir": "/home/bhandead/Projects/CV/test",
+  "n_images": 10982,
+  "ground_truth_available": false,
+  "metrics": null,
+  "predicted_counts_argmax": {
+    "benign": 8358,
+    "malignant": 2624
+  },
+  "device": "cuda",
+  "amp_enabled": true,
+  "predictions_csv": "/home/bhandead/Projects/CV/artifacts/dicm_model_isic2020_official_test_predictions.csv"
+}

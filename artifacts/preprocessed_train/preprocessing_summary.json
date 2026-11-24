@@ -1,0 +1,14 @@
+{
+  "original_images": 33126,
+  "duplicate_pairs": 425,
+  "removed_duplicate_images": 425,
+  "missing_source_images": 0,
+  "retained_images": 32701,
+  "known_patients_before": 2056,
+  "known_patients_after": 2056,
+  "patients_with_multiple_images_before": 2056,
+  "patients_with_multiple_images_after": 2056,
+  "missing_patient_ids": 0,
+  "duplicate_patient_links": 0,
+  "duplicate_pairs_with_unknown_images": 0
+}

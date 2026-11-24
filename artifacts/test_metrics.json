@@ -1,0 +1,11 @@
+{
+  "threshold": 0.729063158100533,
+  "test_images": 6660,
+  "roc_auc": 0.8093829766961371,
+  "average_precision": 0.0779544573721076,
+  "balanced_accuracy": 0.6434351007226354,
+  "malignant_recall": 0.36885245901639346,
+  "accuracy": 0.907957957957958,
+  "always_benign_accuracy": 0.9816816816816817,
+  "random_ranking_average_precision": 0.01831831831831832
+}

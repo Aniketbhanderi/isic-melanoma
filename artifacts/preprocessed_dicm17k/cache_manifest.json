@@ -1,0 +1,23 @@
+{
+  "complete": true,
+  "source_csv": "/home/bhandead/Projects/CV/isic-dicm-17k.csv",
+  "source_images": "/home/bhandead/Projects/CV/images_isic-dicm-17k",
+  "n_images": 10342,
+  "image_shape": [
+    256,
+    256,
+    3
+  ],
+  "dtype": "uint8",
+  "label_column": "diagnosis_2",
+  "target_mapping": {
+    "Benign melanocytic proliferations": 0,
+    "Malignant melanocytic proliferations (Melanoma)": 1
+  },
+  "class_counts": {
+    "benign": 3516,
+    "malignant": 6826
+  },
+  "unique_patient_groups": 5900,
+  "rows_missing_patient_id": 6694
+}

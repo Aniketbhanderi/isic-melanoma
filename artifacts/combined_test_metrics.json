@@ -1,0 +1,30 @@
+{
+  "checkpoint": "/home/bhandead/Projects/CV/artifacts/efficientnet_combined_model.pt",
+  "test_csv": "/home/bhandead/Projects/CV/test_cleaned.csv",
+  "n_test": 4632,
+  "class_counts": {
+    "benign": 4550,
+    "malignant": 82
+  },
+  "loss": 0.07286417118831826,
+  "accuracy": 0.9732297063903281,
+  "roc_auc": 0.9804891450013402,
+  "average_precision": 0.5903247153621992,
+  "precision_malignant": 0.3793103448275862,
+  "recall_malignant": 0.8048780487804879,
+  "f1_malignant": 0.515625,
+  "confusion_matrix_labels_0_1": [
+    [
+      4442,
+      108
+    ],
+    [
+      16,
+      66
+    ]
+  ],
+  "log_loss": 0.0728493332862854,
+  "checkpoint_validation_roc_auc": 0.9909091820085798,
+  "device": "cuda",
+  "amp_enabled": true
+}

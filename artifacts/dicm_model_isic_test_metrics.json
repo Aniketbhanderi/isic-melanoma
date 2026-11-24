@@ -1,0 +1,30 @@
+{
+  "checkpoint": "/home/bhandead/Projects/CV/artifacts/efficientnet_dicm17k_model.pt",
+  "test_csv": "/home/bhandead/Projects/CV/test_cleaned.csv",
+  "n_test": 4632,
+  "class_counts": {
+    "benign": 4550,
+    "malignant": 82
+  },
+  "loss": 1.0807766778481438,
+  "accuracy": 0.7636010362694301,
+  "roc_auc": 0.8596314660948807,
+  "average_precision": 0.07608664206204903,
+  "precision_malignant": 0.06147186147186147,
+  "recall_malignant": 0.8658536585365854,
+  "f1_malignant": 0.11479385610347616,
+  "confusion_matrix_labels_0_1": [
+    [
+      3466,
+      1084
+    ],
+    [
+      11,
+      71
+    ]
+  ],
+  "log_loss": 1.0765787363052368,
+  "checkpoint_validation_roc_auc": 0.935158071095571,
+  "device": "cuda",
+  "amp_enabled": true
+}
