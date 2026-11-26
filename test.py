@@ -1,10 +1,10 @@
-"""Evaluate a trained EfficientNet melanoma checkpoint on the labeled test split.
+"""Evaluate a trained melanoma checkpoint on the labeled test split.
 
 The evaluator uses the project's preprocessed image cache and the metadata
 schema stored in the checkpoint, then writes test metrics and per-image scores.
 
 python test.py --checkpoint artifacts/efficientnet_fold0.pt --cache-dir artifacts/jpeg_256 --test-csv test_cleaned.csv --device cuda --amp --batch-size 32 --output-predictions artifacts/efficientnet_b7_fold0_test.csv --output-metrics artifacts/efficientnet_b7_fold0_test_metrics.json 
-
+python test.py --checkpoint artifacts/resnet50_melanoma_model.pt --cache-dir artifacts/jpeg_256 --test-csv test_cleaned.csv --batch-size 32 --num-workers 4 --log-interval 50 --device auto --amp --output-predictions artifacts/resnet50_test_predictions.csv --output-metrics artifacts/resnet50_test_metrics.json
 
 """
 
@@ -32,7 +32,7 @@ from sklearn.metrics import (
 from torch import nn
 from torch.utils.data import DataLoader
 
-from train import EfficientNetMelanoma, MelanomaDataset, load_training_data
+from train import MelanomaClassifier, MelanomaDataset, load_training_data
 
 
 ROOT = Path(__file__).resolve().parent
@@ -45,7 +45,7 @@ DEFAULT_METRICS = ROOT / "artifacts" / "efficientnet_test_metrics.json"
 
 def parse_args() -> argparse.Namespace:
 	parser = argparse.ArgumentParser(
-		description="Evaluate the trained EfficientNet melanoma model on labeled test data."
+		description="Evaluate a trained melanoma model on labeled test data."
 	)
 	parser.add_argument("--checkpoint", type=Path, default=DEFAULT_CHECKPOINT)
 	parser.add_argument("--cache-dir", type=Path, default=DEFAULT_CACHE)
@@ -103,11 +103,12 @@ def load_test_data(
 		raise ValueError(f"Test CSV is missing required columns: {sorted(missing_columns)}")
 	if test_frame.empty:
 		raise ValueError(f"Test CSV contains no rows: {test_csv}")
-	if test_frame["image_name"].isna().any() or test_frame["image_name"].duplicated().any():
+	if test_frame["image_name"].isna().any() or test_frame["image_name"].astype(str).str.strip().eq("").any() or test_frame["image_name"].duplicated().any():
 		raise ValueError("Test CSV image_name values must be non-empty and unique.")
-	test_frame["target"] = pd.to_numeric(test_frame["target"], errors="raise").astype(np.int64)
+	test_frame["target"] = pd.to_numeric(test_frame["target"], errors="raise")
 	if not test_frame["target"].isin((0, 1)).all():
 		raise ValueError("Test labels must be binary (0=benign, 1=malignant).")
+	test_frame["target"] = test_frame["target"].astype(np.int64)
 	if test_frame["target"].nunique() != 2:
 		raise ValueError("Test metrics require both benign and malignant examples.")
 
@@ -136,7 +137,6 @@ def load_test_data(
 		raise ValueError("Test CSV labels disagree with labels in the preprocessed cache.")
 
 	indices = matched["cache_index"].to_numpy(dtype=np.int64)
-	labels = matched["target_test"].to_numpy(dtype=np.int64)
 	metadata = None
 	if use_metadata:
 		if metadata_schema is None:
@@ -254,7 +254,7 @@ def main() -> None:
 		persistent_workers=args.num_workers > 0,
 	)
 
-	model = EfficientNetMelanoma(
+	model = MelanomaClassifier(
 		backbone_name=backbone,
 		pretrained=False,
 		metadata_features=metadata_features,
@@ -280,6 +280,12 @@ def main() -> None:
 		"precision_malignant": float(precision_score(actual_labels, predicted_labels, zero_division=0)),
 		"recall_malignant": float(recall_score(actual_labels, predicted_labels, zero_division=0)),
 		"f1_malignant": float(f1_score(actual_labels, predicted_labels, zero_division=0)),
+		"precision_macro": float(precision_score(actual_labels, predicted_labels, average="macro", zero_division=0)),
+		"recall_macro": float(recall_score(actual_labels, predicted_labels, average="macro", zero_division=0)),
+		"f1_macro": float(f1_score(actual_labels, predicted_labels, average="macro", zero_division=0)),
+		"precision_weighted": float(precision_score(actual_labels, predicted_labels, average="weighted", zero_division=0)),
+		"recall_weighted": float(recall_score(actual_labels, predicted_labels, average="weighted", zero_division=0)),
+		"f1_weighted": float(f1_score(actual_labels, predicted_labels, average="weighted", zero_division=0)),
 		"confusion_matrix_labels_0_1": confusion_matrix(
 			actual_labels, predicted_labels, labels=[0, 1]
 		).tolist(),

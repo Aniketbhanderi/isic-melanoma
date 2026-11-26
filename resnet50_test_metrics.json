@@ -1,0 +1,30 @@
+{
+  "checkpoint": "/home/bhandead/Projects/CV/artifacts/resnet50_melanoma_model.pt",
+  "test_csv": "/home/bhandead/Projects/CV/test_cleaned.csv",
+  "n_test": 4674,
+  "class_counts": {
+    "benign": 4592,
+    "malignant": 82
+  },
+  "loss": 0.2561847092404445,
+  "accuracy": 0.9013692768506633,
+  "roc_auc": 0.904594151015552,
+  "average_precision": 0.17931187543708527,
+  "precision_malignant": 0.11717171717171718,
+  "recall_malignant": 0.7073170731707317,
+  "f1_malignant": 0.20103986135181975,
+  "confusion_matrix_labels_0_1": [
+    [
+      4155,
+      437
+    ],
+    [
+      24,
+      58
+    ]
+  ],
+  "log_loss": 0.256184846162796,
+  "checkpoint_validation_roc_auc": 0.8605748274609517,
+  "device": "cuda",
+  "amp_enabled": true
+}
