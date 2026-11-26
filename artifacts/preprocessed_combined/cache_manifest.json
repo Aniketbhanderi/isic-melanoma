@@ -1,7 +1,7 @@
 {
   "complete": true,
   "shape": [
-    38946,
+    34272,
     256,
     256,
     3
@@ -20,10 +20,12 @@
   "excluded_official_test_overlap": 0,
   "added_melanomas": 6245,
   "added_rows_missing_patient_id": 4878,
-  "total_images": 38946,
+  "total_images": 34272,
   "class_counts": {
-    "benign": 32120,
-    "malignant": 6826
+    "benign": 27528,
+    "malignant": 6744
   },
-  "patient_grouping_note": "Known patient IDs share base groups. External-only patients are namespaced; missing patients use lesion/image groups. Unknown cross-dataset patient matches and visual duplicates with different IDs are not detected."
+  "patient_grouping_note": "Known patient IDs share base groups. External-only patients are namespaced; missing patients use lesion/image groups. Unknown cross-dataset patient matches and visual duplicates with different IDs are not detected.",
+  "excluded_holdout_images": 4674,
+  "excluded_holdout_patients": 295
 }

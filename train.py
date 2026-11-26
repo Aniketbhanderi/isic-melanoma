@@ -4,6 +4,9 @@ The model follows the high-level design used by the referenced solution:
 an EfficientNet image encoder, an optional metadata MLP, and an averaged
 multi-dropout classification head. This implementation uses the project's
 patient-grouped, deduplicated image cache and binary melanoma labels.
+
+python train.py --cache-dir artifacts/preprocessed_combined --backbone efficientnet_b0 --train-csv train_cleaned.csv --n-folds 5 --fold 0 --epochs 15 --batch-size 32 --output artifacts/efficientnet_combined_fold0.pt
+
 """
 
 from __future__ import annotations
@@ -28,7 +31,8 @@ from torchvision import models, transforms
 
 
 ROOT = Path(__file__).resolve().parent
-DEFAULT_CACHE = ROOT / "artifacts" / "preprocessed_train"
+DEFAULT_CACHE = ROOT / "artifacts" / "jpeg_256"
+DEFAULT_TRAIN_CSV = ROOT / "train_cleaned.csv"
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
 METADATA_CATEGORICAL_COLUMNS = ("sex", "anatom_site_general_challenge")
@@ -42,6 +46,7 @@ def parse_args() -> argparse.Namespace:
 	parser.add_argument("--output", type=Path, default=ROOT / "artifacts" / "efficientnet_melanoma_model.pt")
 	parser.add_argument("--backbone", default="efficientnet_b0", choices=(
 		"efficientnet_b0", "efficientnet_b1", "efficientnet_b2", "efficientnet_b3",
+		"efficientnet_b4", "efficientnet_b5", "efficientnet_b6", "efficientnet_b7",
 	))
 	parser.add_argument("--image-size", type=int, default=256)
 	parser.add_argument("--epochs", type=int, default=15)
@@ -57,6 +62,8 @@ def parse_args() -> argparse.Namespace:
 	parser.add_argument("--pretrained", action=argparse.BooleanOptionalAction, default=True)
 	parser.add_argument("--use-metadata", action=argparse.BooleanOptionalAction, default=True)
 	parser.add_argument("--amp", action=argparse.BooleanOptionalAction, default=True)
+	parser.add_argument("--train-csv", type=Path, default=None,
+						help="Optional CSV to restrict training; omit to use every cache row.")
 	return parser.parse_args()
 
 
@@ -159,35 +166,123 @@ def set_seed(seed: int) -> None:
 	torch.backends.cudnn.benchmark = True
 
 
-def load_training_data(cache_dir: Path) -> tuple[np.ndarray, pd.DataFrame]:
-	manifest_path = cache_dir / "cache_manifest.json"
-	metadata_path = cache_dir / "clean_metadata.csv"
+def load_training_data(cache_dir: Path, train_csv: Path | None = None) -> tuple[np.ndarray, pd.DataFrame]:
+	"""Load the frozen JPEG training set; train_cleaned.csv is mandatory."""
+	# Cache selection is determined by --cache-dir.
+
+	manifest_path = cache_dir / "manifest.json"
+	metadata_path = cache_dir / "metadata.csv"
+	legacy_manifest_path = cache_dir / "cache_manifest.json"
+	legacy_metadata_path = cache_dir / "clean_metadata.csv"
 	image_path = cache_dir / "images_uint8.npy"
-	for path in (manifest_path, metadata_path, image_path):
-		if not path.is_file():
-			raise FileNotFoundError(
-				f"Required training cache file not found: {path}. "
-				"Run the preprocessing cells in preprocess.ipynb first."
-			)
-	with manifest_path.open(encoding="utf-8") as file:
-		manifest = json.load(file)
+
+	if manifest_path.is_file():
+		with manifest_path.open(encoding="utf-8") as file:
+			manifest = json.load(file)
+	elif legacy_manifest_path.is_file():
+		with legacy_manifest_path.open(encoding="utf-8") as file:
+			manifest = json.load(file)
+	else:
+		raise FileNotFoundError(f"No cache manifest found in {cache_dir}")
 	if not manifest.get("complete"):
 		raise ValueError(f"Preprocessed cache is incomplete: {cache_dir}")
 
-	frame = pd.read_csv(metadata_path).sort_values("cache_index").reset_index(drop=True)
-	images = np.load(image_path, mmap_mode="r")
-	expected_shape = (len(frame), 256, 256, 3)
-	if images.shape != expected_shape or images.dtype != np.uint8:
-		raise ValueError(
-			f"Expected uint8 image cache {expected_shape}, got {images.shape} {images.dtype}."
+	if metadata_path.is_file():
+		frame = pd.read_csv(metadata_path).sort_values("cache_index").reset_index(drop=True)
+	elif legacy_metadata_path.is_file():
+		frame = pd.read_csv(legacy_metadata_path).sort_values("cache_index").reset_index(drop=True)
+	else:
+		raise FileNotFoundError(f"No metadata CSV found in {cache_dir}")
+
+	if "patient_group" in frame.columns:
+		groups = frame["patient_group"].astype("string").str.strip()
+	else:
+		groups = pd.Series(pd.NA, index=frame.index, dtype="string")
+	if "patient_id" in frame.columns:
+		patient_ids = frame["patient_id"].astype("string").str.strip()
+		groups = groups.fillna(patient_ids)
+	groups = groups.fillna(
+		"unknown:image:" + frame["image_name"].astype("string").str.strip()
+	)
+	frame["patient_group"] = groups.astype(str)
+
+	if train_csv is not None and not train_csv.is_file():
+		raise FileNotFoundError(f"Required training CSV not found: {train_csv}")
+	if train_csv is not None:
+		train_frame = pd.read_csv(train_csv)
+		required = {"image_name", "target", "patient_id"}
+		missing = required - set(train_frame.columns)
+		if missing:
+			raise ValueError(f"train_cleaned.csv is missing columns: {sorted(missing)}")
+		if train_frame["image_name"].duplicated().any():
+			raise ValueError("train_cleaned.csv contains duplicate image_name values.")
+		train_frame["target"] = pd.to_numeric(train_frame["target"], errors="raise").astype(np.int64)
+		if not train_frame["target"].isin((0, 1)).all():
+			raise ValueError("train_cleaned.csv must contain binary melanoma targets (0/1).")
+
+		matched = frame.merge(
+			train_frame[["image_name", "target", "patient_id"]],
+			on="image_name",
+			how="inner",
+			suffixes=("_cache", "_train"),
+			validate="one_to_one",
 		)
-	if not np.array_equal(frame["cache_index"].to_numpy(), np.arange(len(frame))):
-		raise ValueError("clean_metadata.csv cache_index must be contiguous and ordered.")
-	if frame["patient_group"].isna().any() or frame["target"].isna().any():
-		raise ValueError("Training metadata has missing patient groups or target labels.")
-	if not frame["target"].isin((0, 1)).all():
-		raise ValueError("Expected binary melanoma targets (0=benign, 1=malignant).")
-	return images, frame
+		if len(matched) != len(train_frame):
+			missing_names = sorted(set(train_frame["image_name"]) - set(frame["image_name"]))
+			raise ValueError(
+				f"Only {len(matched)}/{len(train_frame)} train CSV rows exist in the cache; "
+				f"missing examples: {missing_names[:5]}"
+			)
+		if not np.array_equal(
+			matched["target_cache"].to_numpy(dtype=np.int64),
+			matched["target_train"].to_numpy(dtype=np.int64),
+		):
+			raise ValueError("train_cleaned.csv labels disagree with cache labels.")
+
+		matched = matched.sort_values("cache_index").reset_index(drop=True)
+		images = np.load(image_path, mmap_mode="r")
+		if images.shape[:1] != (len(frame),) or images.dtype != np.uint8:
+			raise ValueError(f"Unexpected image cache shape/dtype: {images.shape}, {images.dtype}")
+		if matched["cache_index"].duplicated().any():
+			raise RuntimeError("Duplicate cache indices found for train_cleaned.csv.")
+
+		# Remap matched cache rows to compact arrays while preserving original indices.
+		original_indices = matched["cache_index"].to_numpy(dtype=np.int64)
+		selected_images = images[original_indices]
+		frame = matched.rename(columns={"target_cache": "target"}).copy()
+		frame["patient_group"] = frame["patient_group"].astype("string").str.strip()
+		frame["patient_group"] = frame["patient_group"].fillna("unknown:image:" + frame["image_name"].astype("string").str.strip()).astype(str)
+		frame["cache_index"] = np.arange(len(frame), dtype=np.int64)
+		print(
+			f"Frozen training set: train_cleaned.csv | images={len(frame):,} | "
+			f"patients={frame['patient_group'].nunique():,}",
+			flush=True,
+		)
+		return selected_images, frame
+
+	# Load the full cache as a fallback for backward compatibility (e.g., test.py).
+	print(
+		"================WARNING: No train CSV provided; loading the full cache.================"
+		"================Ensure this is intended behavior for your use case.================",
+		flush=True,
+	)
+	images = np.load(image_path, mmap_mode="r")
+	if images.shape[0] != len(frame) or images.dtype != np.uint8:
+		raise ValueError(f"Unexpected image cache shape/dtype: {images.shape}, {images.dtype}")
+	if frame["cache_index"].duplicated().any():
+		raise RuntimeError("Duplicate cache indices found in the metadata.")
+
+	# Remap cache rows to compact arrays while preserving original indices.
+	original_indices = frame["cache_index"].to_numpy(dtype=np.int64)
+	selected_images = images[original_indices]
+	frame = frame.copy()
+	frame["cache_index"] = np.arange(len(frame), dtype=np.int64)
+	print(
+		f"Full cache loaded: images={len(frame):,} | "
+		f"patients={frame['patient_group'].nunique():,}",
+		flush=True,
+	)
+	return selected_images, frame
 
 
 def build_metadata_features(
@@ -331,7 +426,7 @@ def main() -> None:
 	)
 	set_seed(args.seed)
 
-	images, frame = load_training_data(args.cache_dir)
+	images, frame = load_training_data(args.cache_dir, args.train_csv)
 	labels = frame["target"].to_numpy(dtype=np.int64)
 	groups = frame["patient_group"].astype(str).to_numpy()
 	splitter = StratifiedGroupKFold(n_splits=args.n_folds, shuffle=True, random_state=args.seed)

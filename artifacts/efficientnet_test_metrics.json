@@ -1,30 +1,30 @@
 {
   "checkpoint": "/home/bhandead/Projects/CV/artifacts/efficientnet_melanoma_model.pt",
   "test_csv": "/home/bhandead/Projects/CV/test_cleaned.csv",
-  "n_test": 4632,
+  "n_test": 4674,
   "class_counts": {
-    "benign": 4550,
+    "benign": 4592,
     "malignant": 82
   },
-  "loss": 0.1589381328827359,
-  "accuracy": 0.937607944732297,
-  "roc_auc": 0.9747078531224873,
-  "average_precision": 0.5248476612570734,
-  "precision_malignant": 0.20512820512820512,
-  "recall_malignant": 0.8780487804878049,
-  "f1_malignant": 0.3325635103926097,
+  "loss": 0.19889153503790136,
+  "accuracy": 0.9137783483097989,
+  "roc_auc": 0.9120766762981218,
+  "average_precision": 0.20374940842073663,
+  "precision_malignant": 0.12412177985948478,
+  "recall_malignant": 0.6463414634146342,
+  "f1_malignant": 0.2082514734774067,
   "confusion_matrix_labels_0_1": [
     [
-      4271,
-      279
+      4218,
+      374
     ],
     [
-      10,
-      72
+      29,
+      53
     ]
   ],
-  "log_loss": 0.15893930196762085,
-  "checkpoint_validation_roc_auc": 0.9207907123863442,
+  "log_loss": 0.19888925552368164,
+  "checkpoint_validation_roc_auc": 0.89161914275336,
   "device": "cuda",
   "amp_enabled": true
 }

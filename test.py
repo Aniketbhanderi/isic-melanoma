@@ -2,10 +2,13 @@
 
 The evaluator uses the project's preprocessed image cache and the metadata
 schema stored in the checkpoint, then writes test metrics and per-image scores.
+
+python test.py --checkpoint artifacts/efficientnet_fold0.pt --cache-dir artifacts/jpeg_256 --test-csv test_cleaned.csv --device cuda --amp --batch-size 32 --output-predictions artifacts/efficientnet_b7_fold0_test.csv --output-metrics artifacts/efficientnet_b7_fold0_test_metrics.json 
+
+
 """
 
 from __future__ import annotations
-
 import argparse
 import json
 import os
